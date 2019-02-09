@@ -12,6 +12,28 @@ module.exports = function(app, db) {
     );
   });
 
+  app.get('/student/login', (req, res) => {
+    let username = req.query['username'];
+    let password = req.query['password'];
+
+    db.collection('student').findOne(
+      { username: username, password: password },
+      (err, result) => {
+        let map = {};
+        if (result) {
+          map['status']='success';
+          map['user']=result;
+        }
+        else
+        {
+          map['status']='error';
+        }
+        console.log(map);
+        res.send(map);
+      }
+    );
+  });
+
   app.get('/student/deletestudent', (req, res) => {
     let id = req.query['id'];
 
@@ -85,32 +107,28 @@ module.exports = function(app, db) {
     );
   });
 
- 
-   app.post('/subject/createvideolist',(req,res)=> {
-     console.log('createvideolist');
-     let request=req.body
-     let subjectid= request.subjectid;
-     let chapterid= request.chapterid;
-     db.collection('subject').findMany(
+  app.post('/subject/createvideolist', (req, res) => {
+    console.log('createvideolist');
+    let request = req.body;
+    let subjectid = request.subjectid;
+    let chapterid = request.chapterid;
+    db.collection('subject').findMany(
       { _id: new mongo.ObjectId(subjectid) },
       (err, subjectid) => {
         if (!subject.chapters) subject.chapters = [];
         subject.chapters.push(chapterid);
         res.send(subjectid);
-   }
-   )
-    
-  }
-);
+      }
+    );
+  });
 
-app.post('/student/getvideolist', (req, res) => {
-  console.log('getvideolist');
-  let request = req.body;
-  //let studentid = request.studentid;
-  //let courseid = request.courseid;
-  let subjectid = request.subjectid;
-  let chapterid = request.chapterid;
-
+  app.post('/student/getvideolist', (req, res) => {
+    console.log('getvideolist');
+    let request = req.body;
+    //let studentid = request.studentid;
+    //let courseid = request.courseid;
+    let subjectid = request.subjectid;
+    let chapterid = request.chapterid;
 
     //  app.post('/student/getstudentprofile', (req, res) => {
     //   console.log('getstudentprofile');
